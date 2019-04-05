@@ -2,5 +2,7 @@ server/node_modules/
 webapp/node_modules/
 server/build/
 server/lib/
+server/coverage/
+webapp/coverage/
 webapp/build/
 .idea/

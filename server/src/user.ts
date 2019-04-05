@@ -1,7 +1,17 @@
-import {Schema} from "mongoose";
+import {Schema, Document, model} from "mongoose";
 
-class User extends Schema {
+interface User extends Document {
 
-
+    email?: string;
+    name?: string;
+    isAdmin?: boolean;
 
 }
+
+const UserSchema: Schema = new Schema({
+    email: String,
+    name: String,
+    isAdmin: Boolean,
+});
+
+export default model<User>("User", UserSchema);
