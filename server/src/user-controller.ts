@@ -8,13 +8,13 @@ class UserController implements Controller {
         router.get("/users", async (request: Request, response: Response): Promise<Response> => {
             return response.status(200).json(await User.find());
         });
-        router.post("/user", async (request: Request, response: Response): Promise<Response> => {
+        router.post("/users", async (request: Request, response: Response): Promise<Response> => {
             return response.status(201).json(await User.create(request.body));
         });
-        router.put("/user/:id", async (request: Request, response: Response): Promise<Response> => {
+        router.put("/users/:id", async (request: Request, response: Response): Promise<Response> => {
             return response.status(200).json(await User.updateOne({_id: request.params.id}, request.body));
         });
-        router.delete("/user/:id", async (request: Request, response: Response): Promise<Response> => {
+        router.delete("/users/:id", async (request: Request, response: Response): Promise<Response> => {
             return response.status(204).json(await User.deleteOne({_id: request.params.id}));
         });
     }
