@@ -18,6 +18,8 @@ function Tasks() {
 	const [open, setOpen] = useState(false);
 	const [title, setTitle] = useState(null);
 	const [tasks, setTasks] = useState([]);
+	const [editingTask, setEditingTask] = useState({});
+	const [editingText, setEditingText] = useState(null);
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -40,14 +42,24 @@ function Tasks() {
 	};
 
 	const handleMarkAsDone = async (id) => {
-		const currentTask = tasks.find(task => task._id === id);
-		const data = await markAs(currentTask, true);
-		setTasks([...(tasks.filter(task => task._id !== id)), data]);
+		handleMarkAs(id, true);
 	};
 
 	const handleMarkAsTodo = async (id) => {
+		handleMarkAs(id, false);
+	};
+
+	const handleUpdateText = async (task, text) => {
+		const newTask = {...task, title: text};
+		await updateTask(newTask);
+		setTasks([...(tasks.filter(currentTask => currentTask._id !== task._id)), newTask]);
+		setEditingTask({});
+		setEditingText(null);
+	};
+
+	const handleMarkAs = async (id, value) => {
 		const currentTask = tasks.find(task => task._id === id);
-		const data = await markAs(currentTask, false);
+		const data = await markAs(currentTask, value);
 		setTasks([...(tasks.filter(task => task._id !== id)), data]);
 	};
 
@@ -99,6 +111,21 @@ function Tasks() {
 			mode: 'cors',
 			cache: 'default',
 			body: JSON.stringify({...task, done: done})
+		};
+		return await fetch(`http://localhost:3333/tasks/${task._id}`, request)
+			.then(response => response.json());
+	};
+
+	const updateTask = async (task) => {
+		const headers = new Headers({
+			"Content-Type": "application/json",
+		});
+		const request = {
+			method: 'PUT',
+			headers: headers,
+			mode: 'cors',
+			cache: 'default',
+			body: JSON.stringify(task)
 		};
 		return await fetch(`http://localhost:3333/tasks/${task._id}`, request)
 			.then(response => response.json());
@@ -176,13 +203,26 @@ function Tasks() {
 			(<ul>
 				{(tasks.filter(predicate).map(task => {
 					return (
-						<Card className={'item-list-card'} key={task._id}>
+						<Card className={'item-list-card'} key={task._id} onClick={() => {
+							setEditingText(task.title);
+							setEditingTask(task);
+						}}>
 							<Checkbox
 								checked={task.done}
 								onChange={({target}) => task.done ? handleMarkAsTodo(target.value) : handleMarkAsDone(target.value)}
 								value={task._id}
 							/>
-							{task.title}
+							{editingTask._id === task._id ?
+								<TextField
+									autoFocus
+									margin="normal"
+									id="description"
+									type="text"
+									value={editingText}
+									onChange={(event) => setEditingText(event.target.value)}
+									onKeyUp={({key}) => key === "Enter" ? handleUpdateText(task, editingText) : null}
+								/>
+								: task.title}
 							<Button className={'delete-button'} onClick={() => handleDelete(task)}>
 								<Icon>delete</Icon>
 							</Button>
