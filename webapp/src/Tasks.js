@@ -121,55 +121,8 @@ function Tasks() {
 		handleFindAll();
 	}, []);
 
-	return (
-		<div>
-
-			{tasks.filter(task => !task.done).length === 0 && <h1 className={`youre-done`}>You're done!</h1>}
-
-			{tasks.filter(task => !task.done).length > 0 &&
-			(<ul>
-				{(tasks.filter(task => !task.done).map(task => {
-					return (
-						<Card className={'item-list-card'} key={task._id}>
-							<Checkbox
-								checked={task.done}
-								onChange={({target}) => handleMarkAsDone(target.value)}
-								value={task._id}
-							/>
-							{task.title}
-							<Button className={'delete-button'} onClick={() => handleDelete(task)}>
-								<Icon>delete</Icon>
-							</Button>
-						</Card>
-					);
-				}))}
-			</ul>)}
-
-			{tasks.filter(task => task.done).length > 0 && <Divider/>}
-
-			{tasks.filter(task => task.done).length > 0 &&
-			(<ul>
-				{(tasks.filter(task => task.done).map(task => {
-					return (
-						<Card className={'item-list-card'} key={task._id}>
-							<Checkbox
-								checked={task.done}
-								onChange={({target}) => handleMarkAsTodo(target.value)}
-								value={task._id}
-							/>
-							{task.title}
-							<Button className={'delete-button'} onClick={() => handleDelete(task)}>
-								<Icon>delete</Icon>
-							</Button>
-						</Card>
-					);
-				}))}
-			</ul>)}
-
-			<Fab className={'fab-button'} color="primary" aria-label="Add" onClick={handleClickOpen}>
-				<AddIcon/>
-			</Fab>
-
+	const formModal = () => {
+		return (
 			<Dialog
 				open={open}
 				onClose={handleCancel}
@@ -198,9 +151,59 @@ function Tasks() {
 					</Button>
 				</DialogActions>
 			</Dialog>
+		);
+	};
 
+	const addButton = () => {
+		return (
+			<Fab className={'fab-button'} color="primary" aria-label="Add" onClick={handleClickOpen}>
+				<AddIcon/>
+			</Fab>
+		);
+	};
+
+	const youreDone = () => {
+		return (tasks.filter(task => !task.done).length === 0 && <h1 className={`youre-done`}>You're done!</h1>);
+	};
+
+	const divider = () => {
+		return (tasks.filter(task => task.done).length > 0 && <Divider/>);
+	};
+
+	const taskList = (predicate) => {
+		return (
+			tasks.filter(predicate).length > 0 &&
+			(<ul>
+				{(tasks.filter(predicate).map(task => {
+					return (
+						<Card className={'item-list-card'} key={task._id}>
+							<Checkbox
+								checked={task.done}
+								onChange={({target}) => task.done ? handleMarkAsTodo(target.value) : handleMarkAsDone(target.value)}
+								value={task._id}
+							/>
+							{task.title}
+							<Button className={'delete-button'} onClick={() => handleDelete(task)}>
+								<Icon>delete</Icon>
+							</Button>
+						</Card>
+					);
+				}))}
+			</ul>)
+		);
+	};
+
+	return (
+		<div>
+			{youreDone()}
+			{taskList(task => !task.done)}
+			{divider()}
+			{taskList(task => task.done)}
+			{addButton()}
+			{formModal()}
 		</div>
 	);
+
 }
 
 export default Tasks;
