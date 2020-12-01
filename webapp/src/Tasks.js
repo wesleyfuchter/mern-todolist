@@ -66,6 +66,7 @@ function Tasks() {
 	const handleDelete = async (taskToDelete) => {
 		setTasks([...(tasks.filter(task => task._id !== taskToDelete._id))]);
 		await deleteTask(taskToDelete);
+		alert('Sua tarefa foi excluida, seu preguiçoso procrastinador!');
 	};
 
 	const findAll = async () => {
