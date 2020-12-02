@@ -1,7 +1,7 @@
 export class HelloWorld {
 
     public get text(): string {
-        return "Hello, World!";
+        return "Hello, Guilherme!";
     }
 
 }

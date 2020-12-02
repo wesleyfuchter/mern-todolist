@@ -15,7 +15,7 @@ class HelloWorldController implements Controller {
             return response.send(this.helloWorld.text);
         });
         router.get("/withArg/:arg", async (request: Request, response: Response): Promise<Response> => {
-            return response.send(request.params.arg + ' - ' + this.helloWorld.text);
+            return response.send(`Hello, ${request.params.arg}`);
         });
     }
 
